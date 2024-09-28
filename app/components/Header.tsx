@@ -18,11 +18,11 @@ export function Header() {
             <Link href="/" className="nav-item">
               Home
             </Link>
-            <Link href="/" className="nav-item">
+            <Link href="/how-it-works" className="nav-item">
               How it works
             </Link>
             <Button asChild>
-              <Link href="/">Detect</Link>
+              <Link href="/detect">Detect</Link>
             </Button>
           </div>
         </div>

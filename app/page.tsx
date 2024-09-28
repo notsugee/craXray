@@ -10,10 +10,10 @@ export default function Home() {
     <div className="relative overflow-hidden z-500">
       <section className="mb-40">
         <div className="container flex flex-col justify-center mx-auto">
-          <div className="absolute scale-[250%] left-0 top-0 -rotate-45 opacity-25">
+          <div className="absolute scale-[250%] left-0 top-0 -rotate-45 opacity-25 -z-[2000]">
             <Image src={Crack} alt="Crack" className="bg-blend-color-dodge" />
           </div>
-          <div className="absolute scale-[250%] right-0 bottom-80 rotate-45 opacity-25">
+          <div className="absolute scale-[250%] right-0 bottom-80 rotate-45 opacity-25 -z-[2000]">
             <Image src={Crack} alt="Crack" className="bg-blend-multiply" />
           </div>
           <div>
