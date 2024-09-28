@@ -8,7 +8,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Code } from "lucide-react";
 import Image from "next/image";
 import { CodeBlock } from "react-code-block";
 
