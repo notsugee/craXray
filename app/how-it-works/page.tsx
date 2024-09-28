@@ -178,7 +178,7 @@ export default function Howitworks() {
   );
 }
 
-function CodeBlockBlock({ code }) {
+function CodeBlockBlock({ code }: { code: any }) {
   return (
     <CodeBlock code={code} language="python">
       <CodeBlock.Code className="transparent p-6 rounded-xl shadow-lg text-wrap">
