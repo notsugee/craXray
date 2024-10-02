@@ -3,8 +3,55 @@
 import Bars from "@/app/assets/Bars.svg";
 import Crack from "@/app/assets/Crack.svg";
 import Image from "next/image";
+import { useState } from "react";
+import axios from "axios";
 
 export default function Detect() {
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [result, setResult] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+
+      const objectUrl = URL.createObjectURL(file);
+      setPreview(objectUrl);
+
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedImage) return;
+
+    const formData = new FormData();
+    formData.append("file", selectedImage);
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/predict/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setResult(response.data.result);
+    } catch (error) {
+      console.error("Error uploading the image", error);
+      setResult("Error processing the image");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="relative overflow-x-clip">
       <div className="container flex flex-col justify-center mx-auto">
@@ -23,12 +70,13 @@ export default function Detect() {
           <Image src={Bars} alt="Bars" />
         </div>
       </div>
+
       <div className="flex justify-center">
         <input
           type="file"
           id="file-upload"
           className="hidden"
-          onChange={(e) => console.log(e.target.files)}
+          onChange={handleImageUpload}
         />
         <label
           htmlFor="file-upload"
@@ -37,6 +85,34 @@ export default function Detect() {
           📎 Upload a file
         </label>
       </div>
+
+      {preview && (
+        <div className="flex flex-col items-center mt-10">
+          <h2 className="font-sans gradient-custom text-lg font-semibold mb-2">
+            Image Preview:
+          </h2>
+          <img
+            src={preview}
+            alt="Image Preview"
+            className="w-60 h-60 object-cover"
+          />
+
+          <button
+            onClick={handleSubmit}
+            className="mt-6 px-6 py-2 bg-blue-500 font-sans text-white rounded-full hover:bg-blue-600 transition-colors"
+          >
+            {loading ? "Submitting..." : "Submit for Detection"}
+          </button>
+        </div>
+      )}
+
+      {result && (
+        <div className="flex justify-center mt-6">
+          <h3 className="font-sans gradient-custom text-2xl font-semibold">
+            {result}
+          </h3>
+        </div>
+      )}
     </div>
   );
 }
