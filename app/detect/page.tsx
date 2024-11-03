@@ -12,6 +12,14 @@ export default function Detect() {
   const [result, setResult] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [grayscaleImage, setGrayscaleImage] = useState<string | null>(null);
+  const [binaryImage, setBinaryImage] = useState<string | null>(null);
+  const [contourImage, setContourImage] = useState<string | null>(null);
+  const [boundingBoxImage, setBoundingBoxImage] = useState<string | null>(null);
+
+  const [crackDepth, setCrackDepth] = useState<string | null>(null);
+  const [crackRatio, setCrackRatio] = useState<string | null>(null);
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -34,7 +42,7 @@ export default function Detect() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/predict/",
+        "http://127.0.0.1:5000/detect-crack",
         formData,
         {
           headers: {
@@ -44,6 +52,13 @@ export default function Detect() {
       );
 
       setResult(response.data.result);
+      setGrayscaleImage(response.data.grayscale_image);
+      setBinaryImage(response.data.binary_image);
+      setContourImage(response.data.contour_image);
+      setBoundingBoxImage(response.data.bounding_box_image);
+
+      setCrackDepth(response.data.crack_depth);
+      setCrackRatio(response.data.crack_ratio);
     } catch (error) {
       console.error("Error uploading the image", error);
       setResult("Error processing the image");
@@ -113,6 +128,56 @@ export default function Detect() {
           </h3>
         </div>
       )}
+
+      <div className="flex flex-col items-center mt-10">
+        {grayscaleImage && (
+          <div className="mt-6">
+            <h4>Grayscale Image</h4>
+            <img
+              src={`data:image/png;base64,${grayscaleImage}`}
+              alt="Grayscale"
+            />
+          </div>
+        )}
+
+        {binaryImage && (
+          <div className="mt-6">
+            <h4>Binary Image</h4>
+            <img src={`data:image/png;base64,${binaryImage}`} alt="Binary" />
+          </div>
+        )}
+
+        {contourImage && (
+          <div className="mt-6">
+            <h4>Contour Image</h4>
+            <img src={`data:image/png;base64,${contourImage}`} alt="Contour" />
+          </div>
+        )}
+
+        {boundingBoxImage && (
+          <div className="mt-6">
+            <h4>Bounding Box Image</h4>
+            <img
+              src={`data:image/png;base64,${boundingBoxImage}`}
+              alt="Bounding Box"
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col items-center mt-10">
+        {crackDepth && (
+          <div className="mt-6">
+            <h4>Estimated Crack Depth: {crackDepth} mm</h4>
+          </div>
+        )}
+
+        {crackRatio && (
+          <div className="mt-6">
+            <h4>Crack-to-Image Ratio: {crackRatio}</h4>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
